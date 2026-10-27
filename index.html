@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#090d11" />
+  <meta name="description" content="ORBIT is a browser-native OSINT workbench for authorized reconnaissance of domains, IPs, usernames, emails, and URLs." />
+  <title>ORBIT — OSINT Workbench</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090d11'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23c7f464'/%3E%3Cellipse cx='32' cy='32' rx='24' ry='10' fill='none' stroke='%23c7f464' stroke-width='2' transform='rotate(-28 32 32)'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="ORBIT home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="6" fill="currentColor"/>
+          <ellipse cx="24" cy="24" rx="19" ry="7.5" stroke="currentColor" stroke-width="1.5" transform="rotate(-30 24 24)"/>
+          <circle cx="40" cy="15" r="2.4" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong>ORBIT</strong>
+        <small>OSINT WORKBENCH</small>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#workbench">Workbench</a>
+      <a href="#sources">Sources</a>
+      <a href="#method">Method</a>
+    </nav>
+
+    <button class="icon-btn" id="settingsBtn" type="button" aria-label="Open settings" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.08A1.7 1.7 0 0 0 9 19.36a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.64 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.08A1.7 1.7 0 0 0 4.64 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.64h.01A1.7 1.7 0 0 0 10.04 3.08V3a2 2 0 1 1 4 0v.08A1.7 1.7 0 0 0 15.07 4.64a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.36 9v.01A1.7 1.7 0 0 0 20.92 10.04H21a2 2 0 1 1 0 4h-.08A1.7 1.7 0 0 0 19.4 15Z"/>
+      </svg>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero" id="workbench">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span> BROWSER-NATIVE RECONNAISSANCE</p>
+        <h1>See the public<br /><span class="accent">attack surface.</span></h1>
+        <p class="hero-lede">
+          Map domains, infrastructure, certificates, identities, and archive history
+          from one client-side console. No backend. No server-side retention. Just public
+          sources, correlated.
+        </p>
+        <div class="hero-notes">
+          <span>DNS over HTTPS</span>
+          <span>Certificate transparency</span>
+          <span>RDAP</span>
+          <span>Internet exposure</span>
+        </div>
+      </div>
+
+      <div class="console-shell">
+        <div class="console-bar">
+          <span class="console-label"><span class="soft-dot"></span> target console</span>
+          <span class="console-hint">public sources / no backend</span>
+        </div>
+
+        <div class="console">
+          <label class="scope-check" id="scopeLabel">
+            <input type="checkbox" id="scopeCheck" />
+            <span class="check-box" aria-hidden="true">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="m2.5 6 2.3 2.3 4.7-5"/></svg>
+            </span>
+            <span>
+              I confirm I have authorization to investigate this target.
+              <small>Public data only. You are responsible for lawful use.</small>
+            </span>
+          </label>
+          <p class="scope-error" id="scopeError" role="alert" hidden>
+            Confirm authorization before running an investigation.
+          </p>
+
+          <form class="search-form" id="searchForm" novalidate>
+            <div class="search-input-wrap">
+              <button type="button" class="type-pill" id="detectPill" title="Target type detected automatically. Click to override.">AUTO</button>
+              <input
+                id="targetInput"
+                name="target"
+                type="text"
+                inputmode="text"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                placeholder="example.com  ·  8.8.8.8  ·  @handle  ·  analyst@example.com"
+                aria-label="Target to investigate"
+              />
+            </div>
+            <button class="run-btn" id="runBtn" type="submit">
+              <span>Investigate</span>
+              <kbd>↵</kbd>
+            </button>
+          </form>
+
+          <div class="examples" aria-label="Example targets">
+            <span>Try</span>
+            <button type="button" data-example="example.com" data-type="domain">example.com</button>
+            <button type="button" data-example="1.1.1.1" data-type="ip">1.1.1.1</button>
+            <button type="button" data-example="torvalds" data-type="username">torvalds</button>
+            <button type="button" data-example="archive.org" data-type="url">archive.org</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="provider-strip" aria-hidden="true">
+      <div class="provider-track">
+        <span>CLOUDFLARE DNS</span><i></i><span>RDAP</span><i></i><span>CRT.SH</span><i></i>
+        <span>SHODAN INTERNETDB</span><i></i><span>IPWHOIS</span><i></i><span>GITHUB</span><i></i>
+        <span>WAYBACK MACHINE</span><i></i><span>GRAVATAR</span><i></i><span>KEYBASE</span><i></i>
+        <span>CLOUDFLARE DNS</span><i></i><span>RDAP</span><i></i><span>CRT.SH</span><i></i>
+        <span>SHODAN INTERNETDB</span><i></i><span>IPWHOIS</span><i></i><span>GITHUB</span><i></i>
+        <span>WAYBACK MACHINE</span><i></i><span>GRAVATAR</span><i></i><span>KEYBASE</span><i></i>
+      </div>
+    </div>
+
+    <section class="workspace" aria-label="Investigation workspace">
+      <aside class="run-rail">
+        <div class="rail-head">
+          <span>RUN LOG</span>
+          <button type="button" id="clearHistory">clear</button>
+        </div>
+        <div class="rail-list" id="historyList"></div>
+        <div class="rail-footer">
+          <span class="rail-stat" id="railCount">0 runs</span>
+          <span>stored locally</span>
+        </div>
+      </aside>
+
+      <div class="results-panel" id="resultsPanel">
+        <div class="empty-state" id="emptyState">
+          <div class="radar" aria-hidden="true">
+            <span class="radar-ring r1"></span>
+            <span class="radar-ring r2"></span>
+            <span class="radar-ring r3"></span>
+            <span class="radar-sweep"></span>
+            <span class="radar-core"></span>
+            <span class="radar-blip b1"></span>
+            <span class="radar-blip b2"></span>
+            <span class="radar-blip b3"></span>
+          </div>
+          <p class="empty-kicker">READY FOR A TARGET</p>
+          <h2>Nothing on scope yet.</h2>
+          <p class="empty-copy">
+            Enter a domain, IP, username, email, or URL. ORBIT will fan out across
+            public sources and assemble a structured evidence report.
+          </p>
+          <div class="empty-grid">
+            <div><span>01</span><strong>Domain</strong><p>DNS, RDAP, CT logs, mail posture</p></div>
+            <div><span>02</span><strong>Infrastructure</strong><p>Geolocation, ASN, exposed services</p></div>
+            <div><span>03</span><strong>Identity</strong><p>Profiles, Gravatar, public commits</p></div>
+          </div>
+        </div>
+
+        <div class="loading-state" id="loadingState" hidden aria-live="polite">
+          <div class="scan-frame">
+            <div class="scan-line"></div>
+            <span class="scan-corner tl"></span><span class="scan-corner tr"></span>
+            <span class="scan-corner bl"></span><span class="scan-corner br"></span>
+            <p class="scan-label">RESOLVING PUBLIC FOOTPRINT</p>
+            <h2 id="loadingTarget">—</h2>
+            <div class="scan-steps" id="scanSteps">
+              <span data-step="dns">DNS</span>
+              <span data-step="certs">Certificates</span>
+              <span data-step="rdap">RDAP</span>
+              <span data-step="infra">Infrastructure</span>
+              <span data-step="identity">Identity</span>
+            </div>
+          </div>
+          <p class="loading-note">Queries run directly from your browser. Slow sources may take a few seconds.</p>
+        </div>
+
+        <div class="result" id="resultView" hidden aria-live="polite">
+          <div class="result-header">
+            <div class="result-heading">
+              <div class="result-kicker">
+                <span class="type-pill solid" id="resultType">DOMAIN</span>
+                <span id="resultTimestamp">—</span>
+              </div>
+              <h2 id="resultTarget">—</h2>
+              <p id="resultMeta">—</p>
+            </div>
+            <div class="result-actions">
+              <button type="button" class="btn ghost" id="copyJson">Copy JSON</button>
+              <button type="button" class="btn ghost" id="exportJson">JSON</button>
+              <button type="button" class="btn primary" id="exportMd">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>
+                Report
+              </button>
+            </div>
+          </div>
+
+          <div class="stats-row" id="statsRow"></div>
+
+          <section class="signal-panel" aria-label="Key signals">
+            <div class="signal-head">
+              <span>KEY SIGNALS</span>
+              <span class="signal-legend"><i class="sev attention"></i> attention <i class="sev note"></i> note <i class="sev info"></i> info</span>
+            </div>
+            <div class="signal-list" id="signalList"></div>
+          </section>
+
+          <div id="errorPanel" class="error-panel" hidden></div>
+          <div class="cards" id="cards"></div>
+
+          <footer class="result-footer">
+            <p>Generated client-side by ORBIT. Public-record findings can be incomplete or stale. Verify before acting.</p>
+            <button type="button" class="text-btn" id="runAgain">Run again ↻</button>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sources">
+      <div class="section-head">
+        <p class="eyebrow"><span class="status-dot"></span> DATA SOURCES</p>
+        <h2>Public data, direct from the source.</h2>
+        <p>Every lookup is a direct browser request to a CORS-enabled public API. Nothing is proxied through an ORBIT server.</p>
+      </div>
+      <div class="source-grid">
+        <article><span class="source-index">01</span><h3>DNS over HTTPS</h3><p>Cloudflare DoH for A, AAAA, MX, TXT, NS, CNAME, CAA, SOA, and reverse PTR records.</p><code>cloudflare-dns.com</code></article>
+        <article><span class="source-index">02</span><h3>RDAP</h3><p>Registration data for domains and IP networks via the RDAP bootstrap service.</p><code>rdap.org</code></article>
+        <article><span class="source-index">03</span><h3>Certificate transparency</h3><p>Certificate search and subdomain discovery from public CT logs, with an automatic fallback provider.</p><code>crt.sh + CertSpotter</code></article>
+        <article><span class="source-index">04</span><h3>Internet exposure</h3><p>Observed ports, hostnames, CPEs, tags, and known vulnerabilities for IPs.</p><code>internetdb.shodan.io</code></article>
+        <article><span class="source-index">05</span><h3>Identity surface</h3><p>GitHub, GitLab, Keybase, Hacker News, dev.to, and Codeberg public profiles.</p><code>api.github.com + 5</code></article>
+        <article><span class="source-index">06</span><h3>Archive history</h3><p>Closest Wayback Machine snapshot for a domain or exact URL.</p><code>archive.org</code></article>
+      </div>
+    </section>
+
+    <section class="section method-section" id="method">
+      <div class="method-copy">
+        <p class="eyebrow"><span class="status-dot"></span> METHOD</p>
+        <h2>Evidence over noise.</h2>
+        <p>
+          ORBIT is deliberately narrow. It collects public records, keeps the raw
+          response attached to every finding, and labels slow or failed sources
+          instead of hiding them. No AI guesses. No inferred “risk score.”
+        </p>
+      </div>
+      <div class="method-list">
+        <div><span>01</span><div><h3>Authorize first</h3><p>Only investigate assets you own or have written permission to assess.</p></div></div>
+        <div><span>02</span><div><h3>Preserve the source</h3><p>Each card keeps its provider and raw JSON so findings can be reproduced.</p></div></div>
+        <div><span>03</span><div><h3>Export the trail</h3><p>Download a Markdown report or machine-readable JSON for your case file.</p></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <span class="brand-mark small" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="6" fill="currentColor"/><ellipse cx="24" cy="24" rx="19" ry="7.5" stroke="currentColor" stroke-width="1.5" transform="rotate(-30 24 24)"/><circle cx="40" cy="15" r="2.4" fill="currentColor"/></svg>
+      </span>
+      <div><strong>ORBIT</strong><p>Client-side OSINT for authorized work.</p></div>
+    </div>
+    <div class="footer-links">
+      <a href="#sources">Sources</a>
+      <a href="#method">Method</a>
+      <button type="button" id="footerSettings">Settings</button>
+    </div>
+    <p class="footer-legal">Use only on assets you are authorized to assess. Public data can be wrong.</p>
+  </footer>
+
+  <dialog class="modal" id="settingsDialog" aria-labelledby="settingsTitle">
+    <form method="dialog" class="modal-card" id="settingsForm">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">LOCAL CONFIG</p>
+          <h2 id="settingsTitle">Settings</h2>
+        </div>
+        <button class="icon-btn" id="closeSettings" type="button" aria-label="Close settings">✕</button>
+      </div>
+
+      <label class="field">
+        <span>GitHub token <em>optional</em></span>
+        <input type="password" id="githubToken" placeholder="github_pat_..." autocomplete="off" spellcheck="false" />
+        <small>Raises GitHub API limits. Stored only in this browser and sent only to api.github.com.</small>
+      </label>
+
+      <label class="toggle">
+        <input type="checkbox" id="showRawDefault" />
+        <span class="toggle-track" aria-hidden="true"></span>
+        <span><strong>Expand raw data</strong><small>Show provider JSON open by default on result cards.</small></span>
+      </label>
+
+      <div class="modal-meta">
+        <div><span>Storage</span><strong>localStorage</strong></div>
+        <div><span>Backend</span><strong>None</strong></div>
+        <div><span>Telemetry</span><strong>None</strong></div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn danger" id="clearLocal">Clear local data</button>
+        <button type="submit" class="btn primary" value="save" id="saveSettings">Save settings</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="./assets/app.js"></script>
+</body>
+</html>

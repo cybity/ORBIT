@@ -1,0 +1,13 @@
+{
+  "name": "orbit-osint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Browser-native OSINT workbench for authorized reconnaissance.",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "check": "node --check assets/api.js && node --check assets/app.js && node --check assets/md5.js && node --check assets/modules.js && node --check assets/report.js && node --check scripts/serve.mjs",
+    "test": "node --test tests/unit.test.mjs"
+  }
+}
