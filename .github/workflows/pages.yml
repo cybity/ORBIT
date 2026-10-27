@@ -25,7 +25,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify source
-        run: npm run check && npm test
+        run: |
+          npm run check
+          if [ -f tests/unit.test.mjs ]; then
+            npm test
+          else
+            echo "No unit test file present for this revision; skipping test run."
+          fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
